@@ -34,10 +34,6 @@ export class AuthService {
         return user;
     }
 
-    checkToken(token: string) {
-        return this._jwtService.verify(token);
-    }
-
     private async _createToken({ id, email, username, deitals}: UserDto) {
         const payload: IJwtPayload = {
             id, 
