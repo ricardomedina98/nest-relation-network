@@ -5,7 +5,7 @@ import { UserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 
-@UseGuards(AuthGuard())
+//@UseGuards(AuthGuard())
 @Controller('users')
 export class UserController {
     constructor(
@@ -21,8 +21,7 @@ export class UserController {
     
     @Get()
     async getUsers(): Promise<UserDto[]> {
-        const users = await this._userService.getAll();
-        return users;
+        return await this._userService.getAll();;
     }
 
     @Post()
