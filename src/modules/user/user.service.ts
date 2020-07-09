@@ -54,7 +54,7 @@ export class UserService {
     async create(userDto: CreateUserDto): Promise<UserDto> {
         const { email, username, password, name, firstName, secondName } = userDto;
 
-        const userDb = await this._userRepository.existUsernameAndEmail(email, username);
+        const userDb = await this._userRepository.existUsernameAndEmail(username, email);
 
         if(userDb) {
             throw new ConflictException('User already exists');
@@ -72,7 +72,7 @@ export class UserService {
         }
 
 
-        const user: UserEntity = this._userRepository.create({
+        let user: UserEntity = this._userRepository.create({
             email, username, password, details: { name, firstName, secondName}, role
         });
 
@@ -109,6 +109,17 @@ export class UserService {
             throw new ConflictException("Email already exist");
         }
 
+        const role: RoleEntity = await this._roleRepository.findOne({
+            where: {
+                name: userDto.role,
+                status: RoleStatus.ACTIVE
+            }
+        });
+
+        if(!role) {
+            throw new NotFoundException('Role does not exist');
+        }
+
         const user = this._userRepository.merge(existUser, {
             email,
             username,
@@ -117,7 +128,8 @@ export class UserService {
                 name,
                 firstName,
                 secondName
-            }
+            },
+            role
         });
 
         await this._userRepository.save(user);

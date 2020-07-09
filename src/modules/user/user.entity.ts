@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, BeforeInsert, BeforeUpdate } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, BeforeInsert, BeforeUpdate, ManyToOne } from "typeorm";
 import { UserDetailsEntity } from "./user.details.entity";
 import * as bcrypt from 'bcryptjs';
 import { UserStatus } from "./user-status.enum";
@@ -37,8 +37,7 @@ export class UserEntity extends BaseEntity {
     @JoinColumn({name: 'id_details'})
     details: UserDetailsEntity;
 
-    @OneToOne(type => RoleEntity, {
-        cascade: true,
+    @ManyToOne(type => RoleEntity,{
         nullable: false,
         eager: true
     })
