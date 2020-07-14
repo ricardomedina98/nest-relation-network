@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Body, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Body, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { RoleDTO } from './dto/role.dto';
 import { RoleService } from './role.service';
 import { CreateRoleDTO } from './dto/create-role.dto';
@@ -9,7 +9,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from './guards/role.guard';
 import { Roles } from './decorators/role.decorator';
 import { RoleType } from './role-type.enum';
-@UseGuards(AuthGuard(), RoleGuard)
+//@UseGuards(AuthGuard(), RoleGuard)
+@UsePipes(ValidationPipe)
 @Controller('roles')
 export class RoleController {
 
@@ -18,25 +19,25 @@ export class RoleController {
     ) {}
 
     @Get(':id')
-    @Roles(RoleType.MASTER)
+    @Roles(RoleType.ADMIN)
     async getRoleById(@Param('id', ParseIntPipe) id: number): Promise<RoleDTO> {
         return await this._roleService.getById(id);
     }
 
     @Get()
-    @Roles(RoleType.MASTER)
+    @Roles(RoleType.ADMIN)
     async getRoles(): Promise<RoleDTO[]> {
         return await this._roleService.getAll();
     }
 
     @Post()
-    @Roles(RoleType.MASTER)
+    @Roles(RoleType.ADMIN)
     async createRole(@Body(new ParseNameCreatePipe()) createDto: CreateRoleDTO): Promise<RoleDTO> {
         return await this._roleService.create(createDto);
     }
 
     @Put(':id')
-    @Roles(RoleType.MASTER)
+    @Roles(RoleType.ADMIN)
     async updateRole(@Param('id', ParseIntPipe) id: number,@Body(new ParseNameUpdatePipe()) updateDto: UpdateRoleDTO) {
         return await this._roleService.update(id, updateDto);
     }

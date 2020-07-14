@@ -5,16 +5,18 @@ import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './dto/signin.dto';
 import { IJwtPayload } from './jwt-payload.interface';
 import { UserDto } from '../user/dto/user.dto';
+import { UserRepositry } from '../user/user.repository';
+import { SignUpDto } from './dto/signup.dto';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(AuthRepository)
         private readonly _authRepository: AuthRepository,
-        private readonly _jwtService: JwtService
-    ) {
-
-    }
+        private readonly _userService: UserService,
+        private readonly _jwtService: JwtService,
+    ) { }
 
     async signIn(signInDto: SignInDto): Promise<{token: string}> {
         const user = await this._authRepository.findBySigIn(signInDto);
@@ -24,7 +26,7 @@ export class AuthService {
         return token;
     }
 
-    async validateUser(payload: IJwtPayload) {
+    async validateUser(payload: IJwtPayload): Promise<UserDto> {
         const user = await this._authRepository.findByPayload(payload);
 
         if(!user) {
@@ -34,14 +36,14 @@ export class AuthService {
         return user;
     }
 
-    private async _createToken({ id, email, username, deitals, role}: UserDto) {
+    private async _createToken({ id, email, username, details, role}: UserDto) {
         const payload: IJwtPayload = {
             id, 
             email,
             username,
-            name: deitals.name,
-            firstName: deitals.firstName,
-            secondName: deitals.secondName,
+            name: details.name,
+            firstName: details.firstName,
+            secondName: details.secondName,
             role: role.name
         }
         const token: string = await this._jwtService.sign(payload);

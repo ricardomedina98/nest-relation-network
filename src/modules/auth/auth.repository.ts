@@ -1,7 +1,5 @@
-import { Repository, EntityRepository, getConnection } from "typeorm";
+import { Repository, EntityRepository } from "typeorm";
 import { UserEntity } from "../user/user.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { UserRepositry } from "../user/user.repository";
 import { IJwtPayload } from "./jwt-payload.interface";
 import { toUserDto } from "src/shared/mapper";
 import { UserDto } from "../user/dto/user.dto";

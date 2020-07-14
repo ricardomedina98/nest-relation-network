@@ -15,7 +15,7 @@ export class UserDto {
     email: string;
 
     @IsNotEmpty()
-    deitals: UserDetailsDto
+    details: UserDetailsDto
 
     @IsDate()
     @IsNotEmpty()

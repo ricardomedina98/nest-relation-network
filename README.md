@@ -9,7 +9,7 @@
     MYSQL_USERNAME=root
     MYSQL_PASSWORD=test
     MYSQL_PORT=3306
-    MYSQL_DATABASE=library_control_ute
+    MYSQL_DATABASE=relationship_network
 ```
 
 ### Create file ormconfig.json
@@ -21,7 +21,7 @@
     "password": "test",
     "host": "localhost",
     "port": 3306,
-    "database": "library_control_ute",
+    "database": "relationship_network",
     "entities": [
         "src/modules/**/*.entity.{ts,js}"
     ],

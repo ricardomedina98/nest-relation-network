@@ -12,7 +12,7 @@ export const toUserDto = (data: UserEntity): UserDto => {
       id,
       username,
       email,
-      deitals: {
+      details: {
         id: details.id,
         name: details.name,
         firstName: details.firstName,
@@ -24,7 +24,6 @@ export const toUserDto = (data: UserEntity): UserDto => {
         id_role: role.id_role,
         name: role.name,
         description: role.description,
-        status: role.status,
         createdAt: role.createdAt,
         updatedAt: role.updatedAt
       }
@@ -37,13 +36,12 @@ export const toUserDto = (data: UserEntity): UserDto => {
 export const toRoleDto = (data: RoleEntity): RoleDTO => {
     if(!data) return null;
 
-    const { id_role, name, description, status, createdAt, updatedAt } = data;
+    const { id_role, name, description, createdAt, updatedAt } = data;
     
     let roleDto: RoleDTO = {
         id_role,
         name,
         description,
-        status,
         createdAt,
         updatedAt
     };

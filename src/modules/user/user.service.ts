@@ -11,6 +11,7 @@ import { RoleRepositry } from '../role/role.repository';
 import { RoleType } from '../role/role-type.enum';
 import { RoleEntity } from '../role/role.entity';
 import { RoleStatus } from '../role/role-status.enum';
+import { SignUpDto } from '../auth/dto/signup.dto';
 
 
 @Injectable()
@@ -80,6 +81,36 @@ export class UserService {
 
         return toUserDto(user);
 
+    }
+
+    async register(signUpDto: SignUpDto): Promise<UserDto> {
+        console.log(signUpDto);
+        const { username, name, email, password } = signUpDto;
+
+        const userDb = await this._userRepository.existUsernameAndEmail(username, email);
+
+        if(userDb) {
+            throw new ConflictException('User already exists');
+        }
+
+        const role: RoleEntity = await this._roleRepository.findOne({
+            where: {
+                name: RoleType.GENERAL,
+                status: RoleStatus.ACTIVE
+            }
+        });
+
+        if(!role) {
+            throw new NotFoundException('Role by defualt does not exist');
+        }
+
+        let user: UserEntity = this._userRepository.create({
+            email, username, password, details: { name }, role
+        });
+
+        await this._userRepository.save(user);
+
+        return toUserDto(user);
     }
 
     async update(id: number, userDto: UpdateUserDto): Promise<UserDto> {

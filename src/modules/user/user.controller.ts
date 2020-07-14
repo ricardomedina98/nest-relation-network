@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Body, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Body, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
@@ -8,7 +8,8 @@ import { RoleGuard } from '../role/guards/role.guard';
 import { Roles } from '../role/decorators/role.decorator';
 import { RoleType } from '../role/role-type.enum';
 
-@UseGuards(AuthGuard(), RoleGuard)
+//@UseGuards(AuthGuard(), RoleGuard)
+@UsePipes(ValidationPipe)
 @Controller('users')
 export class UserController {
     constructor(
@@ -16,27 +17,26 @@ export class UserController {
     ) {}
 
     @Get(':id')
-    @Roles(RoleType.MASTER)
+    @Roles(RoleType.ADMIN)
     async getUser(@Param('id', ParseIntPipe) id: number): Promise<UserDto> {
         const user = await this._userService.getById(id);
         return user;
     }
 
-    
     @Get()
-    @Roles(RoleType.MASTER)
+    @Roles(RoleType.ADMIN)
     async getUsers(): Promise<UserDto[]> {
         return await this._userService.getAll();;
     }
 
     @Post()
-    @Roles(RoleType.MASTER)
+    @Roles(RoleType.ADMIN)
     async createUser(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
         return this._userService.create(createUserDto)
     }
 
     @Put(':id')
-    @Roles(RoleType.MASTER)
+    @Roles(RoleType.ADMIN)
     async updateUser(
         @Param('id', ParseIntPipe) id: number,
         @Body() updateUserDto: UpdateUserDto

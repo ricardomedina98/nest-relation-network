@@ -17,10 +17,6 @@ export class RoleDTO {
     @IsString()
     description: string;
 
-    @IsNotEmpty()
-    @IsString()
-    status: string;
-
     @IsDate()
     @IsNotEmpty()
     createdAt: Date;

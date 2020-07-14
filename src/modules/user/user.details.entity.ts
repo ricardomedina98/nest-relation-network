@@ -10,9 +10,9 @@ export class UserDetailsEntity extends BaseEntity {
     name: string;
 
     @Column({type: 'varchar', nullable: true, name: 'first_name'})
-    firstName: string;
+    firstName?: string;
 
-    @Column({type: 'varchar', nullable: false, name: 'second_name'})
-    secondName: string;
+    @Column({type: 'varchar', nullable: true, name: 'second_name'})
+    secondName?: string;
 
 }

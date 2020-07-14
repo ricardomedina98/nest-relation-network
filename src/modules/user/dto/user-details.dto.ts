@@ -8,7 +8,6 @@ export class UserDetailsDto {
     @IsString()
     name: string;
 
-    @IsNotEmpty()
     @IsString()
     firstName: string;
 
