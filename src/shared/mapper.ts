@@ -12,21 +12,12 @@ export const toUserDto = (data: UserEntity): UserDto => {
       id,
       username,
       email,
-      details: {
-        id: details.id,
-        name: details.name,
-        firstName: details.firstName,
-        secondName: details.secondName
-      },
+      name: details.name,
+      firstName: details.firstName,
+      secondName: details.secondName,
+      role: role.name,
       createdAt,
-      updatedAt,
-      role: {
-        id_role: role.id_role,
-        name: role.name,
-        description: role.description,
-        createdAt: role.createdAt,
-        updatedAt: role.updatedAt
-      }
+      updatedAt
     };
   
     return userDto;

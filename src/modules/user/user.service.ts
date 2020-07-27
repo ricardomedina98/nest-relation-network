@@ -55,10 +55,26 @@ export class UserService {
     async create(userDto: CreateUserDto): Promise<UserDto> {
         const { email, username, password, name, firstName, secondName } = userDto;
 
-        const userDb = await this._userRepository.existUsernameAndEmail(username, email);
+        const existUsername = await this._userRepository.findOne({
+            where: {
+                username,
+                status: UserStatus.ACTIVE
+            }
+        });
 
-        if(userDb) {
+        if(existUsername) {
             throw new ConflictException('User already exists');
+        }
+
+        const existEmail = await this._userRepository.findOne({
+            where: {
+                email,
+                status: UserStatus.ACTIVE
+            }
+        });
+
+        if(existEmail) {
+            throw new ConflictException('Email already exists');
         }
 
         const role: RoleEntity = await this._roleRepository.findOne({
@@ -84,13 +100,29 @@ export class UserService {
     }
 
     async register(signUpDto: SignUpDto): Promise<UserDto> {
-        console.log(signUpDto);
+        
         const { username, name, email, password } = signUpDto;
 
-        const userDb = await this._userRepository.existUsernameAndEmail(username, email);
+        const existUsername = await this._userRepository.findOne({
+            where: {
+                username,
+                status: UserStatus.ACTIVE
+            }
+        });
 
-        if(userDb) {
-            throw new ConflictException('User already exists');
+        if(existUsername) {
+            throw new ConflictException('Username already exists');
+        }
+
+        const existEmail = await this._userRepository.findOne({
+            where: {
+                email,
+                status: UserStatus.ACTIVE
+            }
+        });
+
+        if(existEmail) {
+            throw new ConflictException('Email already exists');
         }
 
         const role: RoleEntity = await this._roleRepository.findOne({

@@ -36,17 +36,17 @@ export class AuthService {
         return user;
     }
 
-    private async _createToken({ id, email, username, details, role}: UserDto) {
+    private async _createToken({ id, email, username, name, firstName, secondName, role}: UserDto) {
         const payload: IJwtPayload = {
             id, 
             email,
             username,
-            name: details.name,
-            firstName: details.firstName,
-            secondName: details.secondName,
-            role: role.name
+            name,
+            firstName,
+            secondName,
+            role
         }
-        const token: string = await this._jwtService.sign(payload);
+        const token: string = this._jwtService.sign(payload);
 
         return { token };
     }

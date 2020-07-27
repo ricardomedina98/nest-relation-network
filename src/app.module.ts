@@ -5,12 +5,13 @@ import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { Configuration } from './config/config.keys';
 import { DatabaseModule } from './database/database.module';
-import { UsersModule } from './modules/user/users.module';
+import { UsersModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RoleModule } from './modules/role/role.module';
+import { ContactModule } from './modules/contact/contact.module';
 
 @Module({
-  imports: [ConfigModule, DatabaseModule, UsersModule, AuthModule, RoleModule],
+  imports: [ConfigModule, DatabaseModule, UsersModule, AuthModule, RoleModule, ContactModule],
   controllers: [AppController],
   providers: [AppService],
 })
