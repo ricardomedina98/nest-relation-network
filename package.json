@@ -20,9 +20,14 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "typeorm:seeding": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js",
     "typeorm:migration:generate": "npm run typeorm -- migration:generate -n",
     "typeorm:migration:run": "npm run typeorm -- migration:run",
-    "typeorm:revert": "npm run typeorm -- migration:revert"
+    "typeorm:revert": "npm run typeorm -- migration:revert",
+    "typeorm:schema:drop": "npm run typeorm -- schema:drop",
+    "typeorm:schema:sync": "npm run typeorm -- schema:sync",
+    "typeorm:seeding:seed:config": "npm run typeorm:seeding config",
+    "typeorm:seeding:seed:run": "npm run typeorm:seeding seed"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
@@ -35,13 +40,15 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.27.0",
     "mysql": "^2.18.1",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
-    "typeorm": "^0.2.25"
+    "typeorm": "^0.2.25",
+    "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",
@@ -50,6 +57,7 @@
     "@types/bcryptjs": "^2.4.2",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.3",
+    "@types/faker": "^4.1.12",
     "@types/jest": "25.2.3",
     "@types/node": "^13.9.1",
     "@types/passport": "^1.0.3",

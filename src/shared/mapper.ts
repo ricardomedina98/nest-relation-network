@@ -39,3 +39,24 @@ export const toRoleDto = (data: RoleEntity): RoleDTO => {
   
     return roleDto;
 };
+
+export const toUserStarredContactDto = (data: UserEntity): UserDto => {
+    if(!data) return null;
+
+    const { id, username, email, details, createdAt, updatedAt, role, starredContacts  } = data;
+    
+    let userDto: UserDto = {
+      id,
+      username,
+      email,
+      name: details.name,
+      firstName: details.firstName,
+      secondName: details.secondName,
+      role: role.name,
+      createdAt,
+      updatedAt,
+      starredContacts: starredContacts.map(contact => contact.contact?.id_contact)
+    };
+  
+    return userDto;
+};

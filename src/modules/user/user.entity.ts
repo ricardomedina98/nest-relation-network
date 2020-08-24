@@ -1,8 +1,9 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, BeforeInsert, BeforeUpdate, ManyToOne } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, BeforeInsert, BeforeUpdate, ManyToOne, OneToMany } from "typeorm";
 import { UserDetailsEntity } from "./user.details.entity";
 import * as bcrypt from 'bcryptjs';
 import { UserStatus } from "./user-status.enum";
 import { RoleEntity } from "../role/role.entity";
+import { StarredContactEntity } from "../contact/entities/starred-contact.entity";
 
 
 @Entity('users')
@@ -42,7 +43,13 @@ export class UserEntity extends BaseEntity {
         eager: true
     })
     @JoinColumn({name: 'id_role'})
-    role: RoleEntity
+    role: RoleEntity;
+
+    //Relations
+
+    @OneToMany(() => StarredContactEntity, contact => contact.user)
+    starredContacts: StarredContactEntity[];
+
 
     @BeforeInsert()
     @BeforeUpdate()

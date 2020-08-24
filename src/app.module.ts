@@ -9,9 +9,10 @@ import { UsersModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RoleModule } from './modules/role/role.module';
 import { ContactModule } from './modules/contact/contact.module';
+import { WorldModule } from './modules/world/world.module';
 
 @Module({
-  imports: [ConfigModule, DatabaseModule, UsersModule, AuthModule, RoleModule, ContactModule],
+  imports: [ConfigModule, DatabaseModule, UsersModule, AuthModule, RoleModule, ContactModule, WorldModule],
   controllers: [AppController],
   providers: [AppService],
 })

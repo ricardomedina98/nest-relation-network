@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Body, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Body, Put, UseGuards, UsePipes, ValidationPipe, Request } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
@@ -8,7 +8,7 @@ import { RoleGuard } from '../role/guards/role.guard';
 import { Roles } from '../role/decorators/role.decorator';
 import { RoleType } from '../role/role-type.enum';
 
-//@UseGuards(AuthGuard(), RoleGuard)
+@UseGuards(AuthGuard(), RoleGuard)
 @UsePipes(ValidationPipe)
 @Controller('users')
 export class UserController {
@@ -16,11 +16,16 @@ export class UserController {
         private readonly _userService: UserService
     ) {}
 
+    @Get('contacts/starred')
+    @Roles(RoleType.ADMIN, RoleType.GENERAL)
+    async getUserContactsStarred(@Request() req: any)  { //: Promise<UserDto>
+        return await this._userService.getAllContactsStarred(req.user);
+    }
+
     @Get(':id')
     @Roles(RoleType.ADMIN)
     async getUser(@Param('id', ParseIntPipe) id: number): Promise<UserDto> {
-        const user = await this._userService.getById(id);
-        return user;
+        return await this._userService.getById(id);;
     }
 
     @Get()

@@ -2,10 +2,6 @@ import { IsNotEmpty, IsString, IsDate } from "class-validator";
 
 export class RoleDTO {
 
-    constructor() {
-        this.name = this.name.toUpperCase();
-    }
-
     @IsNotEmpty()
     id_role: number;
 

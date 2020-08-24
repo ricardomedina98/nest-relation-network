@@ -1,10 +1,10 @@
 import { Injectable, BadRequestException, NotFoundException, HttpException, HttpStatus, UnauthorizedException, ConflictException } from '@nestjs/common';
-import { UserRepositry } from './user.repository';
+import { UserRepository } from './user.repository';
 import { InjectRepository, } from '@nestjs/typeorm';
 import { UserEntity  } from './user.entity';
 import { UserStatus } from './user-status.enum';
 import { CreateUserDto } from './dto/create-user.dto';
-import { toUserDto } from 'src/shared/mapper';
+import { toUserDto, toUserStarredContactDto } from 'src/shared/mapper';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { RoleRepositry } from '../role/role.repository';
@@ -17,8 +17,8 @@ import { SignUpDto } from '../auth/dto/signup.dto';
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(UserRepositry)
-        private readonly _userRepository: UserRepositry,
+        @InjectRepository(UserRepository)
+        private readonly _userRepository: UserRepository,
         @InjectRepository(RoleRepositry)
         private readonly _roleRepository: RoleRepositry
     ) {}
@@ -39,6 +39,17 @@ export class UserService {
         }
 
         return toUserDto(user);
+    }
+
+    async getAllContactsStarred(user: UserDto) {
+        const users: UserEntity = await this._userRepository.findOne(user.id, {
+            where: {
+                status: UserStatus.ACTIVE,
+            },
+            relations: ["starredContacts"]
+        });
+
+        return toUserStarredContactDto(users);
     }
 
     async getAll(): Promise<UserDto[]> {

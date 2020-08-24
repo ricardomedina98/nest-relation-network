@@ -9,7 +9,7 @@ export class RoleEntity extends BaseEntity {
     @Column({ type: 'varchar', length: 20, nullable: false })
     name: string;
 
-    @Column({ type: 'text', nullable: false })
+    @Column({ type: 'text', nullable: true })
     description: string;
 
     @Column({ type: 'varchar', default: UserStatus.ACTIVE, length: 8 })

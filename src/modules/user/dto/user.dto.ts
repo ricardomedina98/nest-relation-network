@@ -31,4 +31,6 @@ export class UserDto {
     @IsNotEmpty()
     @IsString()
     role: string;
+
+    starredContacts?: any[];
 }

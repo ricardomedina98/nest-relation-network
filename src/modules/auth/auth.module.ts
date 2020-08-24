@@ -9,13 +9,13 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from 'src/config/config.module';
 import { Configuration } from 'src/config/config.keys';
-import { UserRepositry } from '../user/user.repository';
+import { UserRepository } from '../user/user.repository';
 import { UserService } from '../user/user.service';
 import { RoleRepositry } from '../role/role.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AuthRepository, UserRepositry, RoleRepositry]),
+    TypeOrmModule.forFeature([AuthRepository, UserRepository, RoleRepositry]),
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),

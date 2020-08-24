@@ -3,7 +3,7 @@ import { UserEntity } from "./user.entity";
 import { UserStatus } from "./user-status.enum";
 
 @EntityRepository(UserEntity)
-export class UserRepositry extends Repository<UserEntity> {
+export class UserRepository extends Repository<UserEntity> {
 
     async existUsernameExceptById(id: number, username: string): Promise<UserEntity> {
         return await this.createQueryBuilder('user')
@@ -25,13 +25,4 @@ export class UserRepositry extends Repository<UserEntity> {
         .getOne();
     }
 
-    async existUsernameAndEmail(username: string, email: string): Promise<UserEntity> {
-        return await this.createQueryBuilder('user')
-        .where("user.email = :email OR user.username = :username AND user.status = :status", {
-            email,
-            username,
-            status: UserStatus.ACTIVE
-        })
-        .getOne();
-    }
 }
