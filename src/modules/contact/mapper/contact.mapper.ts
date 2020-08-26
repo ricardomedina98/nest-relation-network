@@ -20,6 +20,10 @@ import { AddressDto } from "../dto/address.dto";
 import { toUserDto } from "src/shared/mapper";
 import { ContactStarredDto } from "../dto/contact/contact-starred.dto";
 import { StarredContactEntity } from "../entities/starred-contact.entity";
+import { TypeRelationshipEntity } from "../entities/type-relationship.entity";
+import { TypeRelationshipDto } from "../dto/type-relationship.dto";
+import { QualityRelationshipDto } from "../dto/quality-relationship.dto";
+import { QualityRelationshipEntity } from "../entities/quality-relationship.entity";
 
 export const toContactDto = (contactEntity: ContactEntity): ContactDto => {
     return {
@@ -30,6 +34,7 @@ export const toContactDto = (contactEntity: ContactEntity): ContactDto => {
         phone: contactEntity.phone,
         age: contactEntity.age,
         alias: contactEntity.alias,
+        email: contactEntity.email,
         timeMeet: contactEntity.timeMeet,
         have_you_referred: contactEntity.have_you_referred,
         you_have_referred_contact: toContactMinDto(contactEntity.you_have_referred_contact),
@@ -44,6 +49,8 @@ export const toContactDto = (contactEntity: ContactEntity): ContactDto => {
         hobbie: toHobbieDto(contactEntity.hobbie),
         address: toAddressDto(contactEntity.address),
         user: toUserDto(contactEntity.user),
+        type_relationship: toRelationshipDto(contactEntity.typeRelationship),
+        quality_relationship: toQualityRelationshipDto(contactEntity.qualityRelationship),
         createdAt: contactEntity.createdAt,
         updatedAt: contactEntity.updatedAt
     }
@@ -149,5 +156,23 @@ export const toAddressDto = (addressEntity: AddressEntity) : AddressDto => {
         },
         postalCode: addressEntity?.postalCode
     }
+
+}
+
+export const toRelationshipDto = (relationshipEntity: TypeRelationshipEntity): TypeRelationshipDto => {
+
+    return {
+        id_type_relationship: relationshipEntity?.id_type_relationship,
+        name: relationshipEntity?.name
+    };
+
+}
+
+export const toQualityRelationshipDto = (relationshipQuality: QualityRelationshipEntity): QualityRelationshipDto => {
+
+    return {
+        id_quality_relationship: relationshipQuality?.id_quality_relationship,
+        name: relationshipQuality?.name
+    };
 
 }

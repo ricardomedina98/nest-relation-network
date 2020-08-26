@@ -10,7 +10,7 @@ import { ContactStatus } from "../types/contact-status.enum";
 import { AddressEntity } from "./address.entity";
 import { StarredContactEntity } from "./starred-contact.entity";
 import { UserEntity } from "src/modules/user/user.entity";
-import { RelationshipEntity } from "./relationship.entity";
+import { TypeRelationshipEntity } from "./type-relationship.entity";
 import { QualityRelationshipEntity } from "./quality-relationship.entity";
 
 @Entity('contacts')
@@ -100,11 +100,11 @@ export class ContactEntity extends BaseEntity {
     @JoinColumn({name: 'id_address'})
     address: AddressEntity;
 
-    @ManyToOne(() => RelationshipEntity, { nullable: true })
-    @JoinColumn({name: 'id_relationship'})
-    relationship: RelationshipEntity;
+    @ManyToOne(() => TypeRelationshipEntity, { nullable: true })
+    @JoinColumn({name: 'id_type_relationship'})
+    typeRelationship: TypeRelationshipEntity;
 
-    @ManyToOne(() => RelationshipEntity, { nullable: true })
+    @ManyToOne(() => QualityRelationshipEntity, { nullable: true })
     @JoinColumn({name: 'id_quality_relationship'})
     qualityRelationship: QualityRelationshipEntity;
 

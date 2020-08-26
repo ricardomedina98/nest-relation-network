@@ -1,7 +1,7 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn } from "typeorm";
 import { ContactEntity } from "./contact.entity";
 
-@Entity('contact_quality_relationship')
+@Entity('contact_quality_relationships')
 export class QualityRelationshipEntity extends BaseEntity {
     
     @PrimaryGeneratedColumn('increment')

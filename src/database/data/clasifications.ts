@@ -1,10 +1,10 @@
 export const clasifications = [
-    "MECENAS",
-    "PROMOTOR",
-    "CONOCIDO",
-    "CLIENTE",
-    "SOCIO",
-    "ALIADO"
+    "Mecenas",
+    "Promotor",
+    "Conocido",
+    "Cliente",
+    "Socio",
+    "Aliado"
 ]
 
 

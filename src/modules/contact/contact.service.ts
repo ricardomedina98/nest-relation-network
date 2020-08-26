@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ContactRepository } from './repositories/contact.repository';
 import { ContactStatus } from './types/contact-status.enum';
-import { toContactDto, toProfessionDto, toOcupationDto, toClasificationDto, toHobbieDto, toTitleDto, toGenderDto, toCivilStatusDto, toContactMinDto } from './mapper/contact.mapper';
+import { toContactDto, toProfessionDto, toOcupationDto, toClasificationDto, toHobbieDto, toTitleDto, toGenderDto, toCivilStatusDto, toContactMinDto, toRelationshipDto, toQualityRelationshipDto } from './mapper/contact.mapper';
 import { ContactDto } from './dto/contact/contact.dto';
 import { ProfessionDto } from './dto/profession.dto';
 import { ProfessionRepository } from './repositories/profession.repository';
@@ -24,12 +24,15 @@ import { CountryRepository } from '../world/repositories/country.repository';
 import { CityRepository } from '../world/repositories/city.repository';
 import { StateRepository } from '../world/repositories/state.repository';
 import * as moment from 'moment';
-import { getManager } from 'typeorm';
 import { UserDto } from '../user/dto/user.dto';
 import { UserRepository } from '../user/user.repository';
 import { UserStatus } from '../user/user-status.enum';
 import { StarredContactRepository } from './repositories/starred-contact.repository';
 import { toUserDto } from 'src/shared/mapper';
+import { TypeRelationshipRepository } from './repositories/type-relationship.repository';
+import { QualityRelationshipRepository } from './repositories/quality-relationship.repository';
+import { TypeRelationshipDto } from './dto/type-relationship.dto';
+import { QualityRelationshipDto } from './dto/quality-relationship.dto';
 
 @Injectable()
 export class ContactService {
@@ -63,6 +66,10 @@ export class ContactService {
         private readonly _userRepository: UserRepository,
         @InjectRepository(StarredContactRepository)
         private readonly _starredContactRepository: StarredContactRepository,
+        @InjectRepository(TypeRelationshipRepository)
+        private readonly _relationshipRepository: TypeRelationshipRepository,
+        @InjectRepository(QualityRelationshipRepository)
+        private readonly _qualityRelationshipRepository: QualityRelationshipRepository,
     ) {}
 
     async getAllContactsByUser(user: UserDto) { //: Promise<ContactDto[]>
@@ -87,7 +94,9 @@ export class ContactService {
                 "clasification",
                 "hobbie",
                 "address",
-                "user"
+                "user",
+                "typeRelationship",
+                "qualityRelationship"
             ]
         });
 
@@ -117,6 +126,10 @@ export class ContactService {
 
         const hobbieDB = await this._hobbieRepository.findOne(createContactDto.hobbie);
 
+        const typeRelationshipDB = await this._relationshipRepository.findOne(createContactDto.type_relationship);
+
+        const qualityRelationshipDB = await this._qualityRelationshipRepository.findOne(createContactDto.quality_relationship);
+
         //Address
 
         const countryDB = await this._countryRepository.findOne({ where: { iso2: createContactDto.country } });
@@ -138,6 +151,7 @@ export class ContactService {
             phone: createContactDto.phone,
             age: createContactDto.age,
             alias: createContactDto.alias,
+            email: createContactDto.email,
             timeMeet: moment(createContactDto.timeMeet,'YYYY-MM-DD').toDate(),
             have_you_referred: createContactDto.have_you_referred,
             has_referred_you: createContactDto.has_referred_you,
@@ -151,7 +165,9 @@ export class ContactService {
             clasification: clasificationDB,
             hobbie: hobbieDB,
             address: addressNew,
-            user: userDB
+            user: userDB,
+            typeRelationship: typeRelationshipDB,
+            qualityRelationship: qualityRelationshipDB
         });
 
         contactNew = await this._contactRepository.save(contactNew);
@@ -250,6 +266,18 @@ export class ContactService {
         const civilStatuses = await this._civilStatusRepository.find();
 
         return civilStatuses.map(civilStatus => toCivilStatusDto(civilStatus));
+    }
+
+    async getAllRelationships(): Promise<TypeRelationshipDto[]> {
+        const relationships = await this._relationshipRepository.find();
+
+        return relationships.map(relationship => toRelationshipDto(relationship));
+    }
+
+    async getAllQualityRelationships(): Promise<QualityRelationshipDto[]> {
+        const qualityRelationships = await this._qualityRelationshipRepository.find();
+
+        return qualityRelationships.map(q_relationship => toQualityRelationshipDto(q_relationship));
     }
 
 

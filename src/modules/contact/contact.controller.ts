@@ -12,7 +12,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { RoleGuard } from '../role/guards/role.guard';
 import { Roles } from '../role/decorators/role.decorator';
 import { RoleType } from '../role/role-type.enum';
-import { UserDto } from '../user/dto/user.dto';
+import { TypeRelationshipDto } from './dto/type-relationship.dto';
+import { QualityRelationshipDto } from './dto/quality-relationship.dto';
 
 @UseGuards(AuthGuard(), RoleGuard)
 @UsePipes(ValidationPipe)
@@ -56,6 +57,16 @@ export class ContactController {
     @Get('civil-status')
     async getCivilStatus(): Promise<CivilStatusDto[]> {
         return this._contactService.getAllCivilStatuses();
+    }
+
+    @Get('type-relationship')
+    async getRelationships(): Promise<TypeRelationshipDto[]> {
+        return this._contactService.getAllRelationships();
+    }
+
+    @Get('quality-relationship')
+    async getQualityRelationships(): Promise<QualityRelationshipDto[]> {
+        return this._contactService.getAllQualityRelationships();
     }
 
     @Post()

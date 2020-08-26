@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean, IsDate, IsNumberString } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean, IsDate, IsNumberString, IsEmail } from "class-validator";
 import { Transform } from "class-transformer";
 import * as moment from 'moment';
 
@@ -26,6 +26,10 @@ export class CreateContactDto {
     @IsOptional()
     @IsString()
     alias: string;
+
+    @IsOptional()
+    @IsEmail()
+    email: string;
 
     @IsOptional()
     @Transform(value => moment(value))
@@ -73,6 +77,14 @@ export class CreateContactDto {
     @IsNumber()
     @Transform(value => Number(value))
     hobbie: number;
+
+    @IsNumber()
+    @Transform(value => Number(value))
+    type_relationship: number;
+
+    @IsNumber()
+    @Transform(value => Number(value))
+    quality_relationship: number;
     
     //Address
     @IsNumber()
@@ -82,9 +94,8 @@ export class CreateContactDto {
     @IsString()
     country: string;
 
-    @IsNumber()
-    @Transform(value => Number(value))
-    state: number;
+    @IsString()
+    state: string;
 
     @IsNumber()
     @Transform(value => Number(value))

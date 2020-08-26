@@ -9,7 +9,8 @@ import { HobbieDto } from "../hobbie.dto";
 import { AddressDto } from "../address.dto";
 import { UserDto } from "src/modules/user/dto/user.dto";
 import { ContactMinDto } from "./contact-min.dto";
-import { ContactStarredDto } from "./contact-starred.dto";
+import { TypeRelationshipDto } from "../type-relationship.dto";
+import { QualityRelationshipDto } from "../quality-relationship.dto";
 
 export class ContactDto {
     id_contact: number;
@@ -19,6 +20,7 @@ export class ContactDto {
     phone: string;
     age: number;
     alias: string;
+    email: string;
     timeMeet: Date;
     have_you_referred: boolean;
     you_have_referred_contact: ContactMinDto;
@@ -32,6 +34,8 @@ export class ContactDto {
     clasification: ClasificationDto;
     hobbie: HobbieDto;
     address: AddressDto;
+    type_relationship: TypeRelationshipDto;
+    quality_relationship: QualityRelationshipDto;
     user: UserDto;
     createdAt: Date;
     updatedAt: Date;

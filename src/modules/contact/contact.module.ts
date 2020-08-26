@@ -17,13 +17,16 @@ import { CityRepository } from '../world/repositories/city.repository';
 import { AuthModule } from '../auth/auth.module';
 import { UserRepository } from '../user/user.repository';
 import { StarredContactRepository } from './repositories/starred-contact.repository';
+import { TypeRelationshipRepository } from './repositories/type-relationship.repository';
+import { QualityRelationshipRepository } from './repositories/quality-relationship.repository';
 
 @Module({
     imports: [TypeOrmModule.forFeature([ContactRepository, 
         ProfessionRepository, OcupationRepository, 
         ClasificationRepository, HobbieRepository, 
         TitleRepository, GenderRepository, CivilStatusRepository,
-        AddressRepository, CountryRepository, StateRepository, CityRepository, UserRepository, StarredContactRepository]), AuthModule],
+        AddressRepository, CountryRepository, StateRepository, CityRepository, 
+        UserRepository, StarredContactRepository, TypeRelationshipRepository, QualityRelationshipRepository]), AuthModule],
     controllers: [ContactController],
     providers: [ContactService]
 })
