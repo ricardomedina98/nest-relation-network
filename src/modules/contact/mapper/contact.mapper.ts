@@ -140,18 +140,18 @@ export const toAddressDto = (addressEntity: AddressEntity) : AddressDto => {
 
     return {
         country: {
-            id: addressEntity.country?.id,
-            name: addressEntity.country?.name,
-            iso2: addressEntity.country?.iso2
+            id: addressEntity?.country?.id,
+            name: addressEntity?.country?.name,
+            iso2: addressEntity?.country?.iso2
         },
         state: {
-            id: addressEntity.state?.id,
-            name: addressEntity.state?.name,
-            iso2: addressEntity.state?.iso2
+            id: addressEntity?.state?.id,
+            name: addressEntity?.state?.name,
+            iso2: addressEntity?.state?.iso2
         },
         city: {
-            id: addressEntity.city?.id,
-            name: addressEntity.city?.name,
+            id: addressEntity?.city?.id,
+            name: addressEntity?.city?.name,
             stateCode: addressEntity?.city?.stateCode
         },
         postalCode: addressEntity?.postalCode

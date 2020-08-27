@@ -96,7 +96,7 @@ export class ContactEntity extends BaseEntity {
     hobbie: HobbieEntity;
     
 
-    @OneToOne(() => AddressEntity, { nullable: true, cascade: true })
+    @OneToOne(() => AddressEntity, { nullable: true, cascade: true, onUpdate: 'CASCADE' })
     @JoinColumn({name: 'id_address'})
     address: AddressEntity;
 

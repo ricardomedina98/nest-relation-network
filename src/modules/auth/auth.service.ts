@@ -5,16 +5,12 @@ import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './dto/signin.dto';
 import { IJwtPayload } from './jwt-payload.interface';
 import { UserDto } from '../user/dto/user.dto';
-import { UserRepository } from '../user/user.repository';
-import { SignUpDto } from './dto/signup.dto';
-import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(AuthRepository)
         private readonly _authRepository: AuthRepository,
-        private readonly _userService: UserService,
         private readonly _jwtService: JwtService,
     ) { }
 

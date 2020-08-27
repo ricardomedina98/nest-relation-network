@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ContactRepository } from './repositories/contact.repository';
 import { ContactStatus } from './types/contact-status.enum';
@@ -33,6 +33,7 @@ import { TypeRelationshipRepository } from './repositories/type-relationship.rep
 import { QualityRelationshipRepository } from './repositories/quality-relationship.repository';
 import { TypeRelationshipDto } from './dto/type-relationship.dto';
 import { QualityRelationshipDto } from './dto/quality-relationship.dto';
+import { UpdateContactDto } from './dto/contact/update-contact.dto';
 
 @Injectable()
 export class ContactService {
@@ -104,37 +105,119 @@ export class ContactService {
         return contacts.map(contact => toContactDto(contact));
     }
 
+    async updateContact(id_contact: number, updateContactDto: UpdateContactDto, user: UserDto) {
+
+        const existContact = await this._contactRepository.existContactExceptById(id_contact, user.id, updateContactDto.name, updateContactDto.firstSurname);
+
+        if(existContact) {
+            throw new ConflictException('Contact already exist');
+        }
+
+        const contact = await this._contactRepository.findOne({ where: { id_contact }, relations: ["address"] });
+
+        if(!contact) {
+            throw new NotFoundException('Contact to update does not exist');
+        }
+
+        const userDB = await this._userRepository.findOne(user.id, { where: { status: UserStatus.ACTIVE } });
+
+        //Optional parameters
+        const you_have_referred_contactDB = await this._contactRepository.findOne({where: { id_contact: updateContactDto.you_have_referred_contact }});
+        
+        const has_referred_you_contactDB = await this._contactRepository.findOne({where: { id_contact: updateContactDto.has_referred_you_contact }});
+
+        const titleDB = await this._titleRepository.findOne({where: { id_title: updateContactDto.title }});
+
+        const genderDB = await this._genderRepository.findOne({ where: { id_gender: updateContactDto.gender } });
+        
+        const civilstatusDB = await this._civilStatusRepository.findOne({ where: { id_civilstatus: updateContactDto.civilstatus } });
+
+        const professionDB = await this._professionRepository.findOne({where: { id_profession: updateContactDto.profession }});
+        
+        const ocupationDB = await this._ocupationRepository.findOne({where: { id_ocupation: updateContactDto.ocupation }});
+
+        const clasificationDB = await this._clasificationRepository.findOne({ where: { id_clasification: updateContactDto.clasification } });
+
+        const hobbieDB = await this._hobbieRepository.findOne({ where: { id_hobbie: updateContactDto.hobbie } });
+
+        const typeRelationshipDB = await this._relationshipRepository.findOne({where: { id_type_relationship: updateContactDto.type_relationship }});
+
+        const qualityRelationshipDB = await this._qualityRelationshipRepository.findOne({where: { id_quality_relationship: updateContactDto.quality_relationship }});
+
+        //Address
+        const countryDB = await this._countryRepository.findOne({ where: { iso2: updateContactDto.country } });
+        const stateDB = await this._stateRepository.findOne({ where: { iso2: updateContactDto.state }});
+        const cityDB = await this._cityRepository.findOne({ where: { id: updateContactDto.city }});
+
+
+        let contactAddressUpdate = this._addressRepository.update(contact.address.id_address, {
+            country: countryDB,
+            state: stateDB,
+            city: cityDB,
+            postalCode : updateContactDto.postalCode
+        });
+
+        let contactUpdated = await this._contactRepository.update(id_contact, {
+            name: updateContactDto.name,
+            firstSurname: updateContactDto.firstSurname,
+            secondSurname: updateContactDto.secondSurname,
+            phone: updateContactDto.phone,
+            age: updateContactDto.age,
+            alias: updateContactDto.alias,
+            email: updateContactDto.email,
+            timeMeet: moment(updateContactDto.timeMeet,'YYYY-MM-DD').toDate(),
+            have_you_referred: updateContactDto.have_you_referred,
+            has_referred_you: updateContactDto.has_referred_you,
+            you_have_referred_contact: you_have_referred_contactDB,
+            has_referred_you_contact: has_referred_you_contactDB,
+            title: titleDB,
+            gender: genderDB,
+            civilstatus: civilstatusDB,
+            profession: professionDB,
+            ocupation: ocupationDB,
+            clasification: clasificationDB,
+            hobbie: hobbieDB,
+            user: userDB,
+            typeRelationship: typeRelationshipDB,
+            qualityRelationship: qualityRelationshipDB
+        });
+
+        // contactUpdated = await this._contactRepository.save(contactUpdated);
+
+        return contactUpdated;
+    }
+
     async createContactByUser(createContactDto: CreateContactDto, user: UserDto) {
 
         const userDB = await this._userRepository.findOne(user.id, { where: { status: UserStatus.ACTIVE } });
 
-        const you_have_referred_contactDB = await this._contactRepository.findOne(createContactDto.you_have_referred_contact);
+        //Optional parameters
+        const you_have_referred_contactDB = await this._contactRepository.findOne({where: { id_contact: createContactDto.you_have_referred_contact }});
         
-        const has_referred_you_contactDB = await this._contactRepository.findOne(createContactDto.has_referred_you_contact);
+        const has_referred_you_contactDB = await this._contactRepository.findOne({where: { id_contact: createContactDto.has_referred_you_contact }});
 
-        const titleDB = await this._titleRepository.findOne(createContactDto.title);
+        const titleDB = await this._titleRepository.findOne({where: { id_title: createContactDto.title }});
 
-        const genderDB = await this._genderRepository.findOne(createContactDto.gender);
+        const genderDB = await this._genderRepository.findOne({ where: { id_gender: createContactDto.gender } });
         
-        const civilstatusDB = await this._civilStatusRepository.findOne(createContactDto.civilstatus);
+        const civilstatusDB = await this._civilStatusRepository.findOne({ where: { id_civilstatus: createContactDto.civilstatus } });
 
-        const professionDB = await this._professionRepository.findOne(createContactDto.profession);
+        const professionDB = await this._professionRepository.findOne({where: { id_profession: createContactDto.profession }});
         
-        const ocupationDB = await this._ocupationRepository.findOne(createContactDto.ocupation);
+        const ocupationDB = await this._ocupationRepository.findOne({where: { id_ocupation: createContactDto.ocupation }});
 
-        const clasificationDB = await this._clasificationRepository.findOne(createContactDto.clasification);
+        const clasificationDB = await this._clasificationRepository.findOne({ where: { id_clasification: createContactDto.clasification } });
 
-        const hobbieDB = await this._hobbieRepository.findOne(createContactDto.hobbie);
+        const hobbieDB = await this._hobbieRepository.findOne({ where: { id_hobbie: createContactDto.hobbie } });
 
-        const typeRelationshipDB = await this._relationshipRepository.findOne(createContactDto.type_relationship);
+        const typeRelationshipDB = await this._relationshipRepository.findOne({where: { id_type_relationship: createContactDto.type_relationship }});
 
-        const qualityRelationshipDB = await this._qualityRelationshipRepository.findOne(createContactDto.quality_relationship);
+        const qualityRelationshipDB = await this._qualityRelationshipRepository.findOne({where: { id_quality_relationship: createContactDto.quality_relationship }});
 
         //Address
-
         const countryDB = await this._countryRepository.findOne({ where: { iso2: createContactDto.country } });
         const stateDB = await this._stateRepository.findOne({ where: { iso2: createContactDto.state }});
-        const cityDB = await this._cityRepository.findOne(createContactDto.city);
+        const cityDB = await this._cityRepository.findOne({ where: { id: createContactDto.city }});
 
         let addressNew = this._addressRepository.create({
             country: countryDB,

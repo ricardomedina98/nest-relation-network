@@ -14,6 +14,8 @@ import { Roles } from '../role/decorators/role.decorator';
 import { RoleType } from '../role/role-type.enum';
 import { TypeRelationshipDto } from './dto/type-relationship.dto';
 import { QualityRelationshipDto } from './dto/quality-relationship.dto';
+import { PareseToNullEmptyField } from './pipes/toNull.pipe';
+import { UpdateContactDto } from './dto/contact/update-contact.dto';
 
 @UseGuards(AuthGuard(), RoleGuard)
 @UsePipes(ValidationPipe)
@@ -69,12 +71,6 @@ export class ContactController {
         return this._contactService.getAllQualityRelationships();
     }
 
-    @Post()
-    @Roles(RoleType.ADMIN, RoleType.GENERAL)
-    async createContact(@Body() createContactDto: CreateContactDto, @Request() req: any) {
-        return this._contactService.createContactByUser(createContactDto, req.user);
-    }
-
     @Get('user')
     @Roles(RoleType.ADMIN, RoleType.GENERAL)
     async getContacts(@Request() req: any) {
@@ -91,6 +87,21 @@ export class ContactController {
     @Roles(RoleType.ADMIN, RoleType.GENERAL)
     async unStarredContact(@Param('id_contact', ParseIntPipe) id_contact: number, @Request() req: any) {
         return this._contactService.unStarredContact(id_contact, req.user);
+    }
+
+    @Post()
+    @Roles(RoleType.ADMIN, RoleType.GENERAL)
+    async createContact(@Body(new PareseToNullEmptyField()) createContactDto: CreateContactDto, @Request() req: any) {
+        return this._contactService.createContactByUser(createContactDto, req.user);
+    }
+    
+    @Put(':id_contact')
+    @Roles(RoleType.ADMIN, RoleType.GENERAL)
+    async updateContact(
+        @Param('id_contact', ParseIntPipe) id_contact: number, 
+        @Body(new PareseToNullEmptyField()) updateContactDto: UpdateContactDto,
+        @Request() req: any) {
+        return this._contactService.updateContact(id_contact, updateContactDto, req.user);
     }
 
 

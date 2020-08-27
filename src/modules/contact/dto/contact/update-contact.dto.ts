@@ -1,9 +1,8 @@
 import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean, IsDate, IsNumberString, IsEmail, isEmpty } from "class-validator";
 import { Transform } from "class-transformer";
 import * as moment from 'moment';
-import { isNumber } from "util";
 
-export class CreateContactDto {
+export class UpdateContactDto {
     @IsString()
     @IsNotEmpty()
     name: string;
