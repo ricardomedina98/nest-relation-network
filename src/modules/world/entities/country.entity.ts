@@ -16,7 +16,7 @@ export class CountryEntity extends BaseEntity {
     @Column({type: 'char', precision: 2, nullable: false})
     iso2: string;
 
-    @Column({type: 'varchar', nullable: true, name: 'phone_code'})
+    @Column({type: 'varchar', nullable: true, name: 'phonecode'})
     phoneCode: string;
 
     @Column({type: 'varchar', nullable: true})
@@ -42,6 +42,9 @@ export class CountryEntity extends BaseEntity {
 
     @Column({type: 'tinyint', precision: 1, nullable: false, default: 1})
     flag: number;
+
+    @Column({type: 'varchar'})
+    wikiDataId: string;
 
     @OneToMany(type => StateEntity, state => state.id)
     states: StateEntity[];

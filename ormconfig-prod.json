@@ -1,0 +1,17 @@
+{
+    "type": "mysql",
+    "username": "hotdogos_relationship_network",
+    "password": "Network_Relations",
+    "host": "184.154.73.71",
+    "port": 3306,
+    "database": "hotdogos_relationship_network",
+    "entities": [
+        "src/modules/**/*.entity.{ts,js}"
+    ],
+    "migrations": ["src/database/migrations/*{.ts, .js}"],
+    "cli": {
+        "migrationsDir": "src/database/migrations"
+    },
+    "seeds": ["src/database/seeds/**/*{.ts,.js}"],
+    "factories": ["src/database/factories/**/*{.ts,.js}"]
+}

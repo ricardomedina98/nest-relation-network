@@ -19,7 +19,8 @@ export const databaseProviders = [
                 password : config.get(Configuration.MYSQL_PASSWORD),
                 logging: true,
                 entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-                migrations: [__dirname + '/migrations/*{.ts,.js}']
+                migrations: [__dirname + '/migrations/*{.ts,.js}'],
+                charset: 'utf8mb4_unicode_ci'
             } as ConnectionOptions;
         } 
     })
