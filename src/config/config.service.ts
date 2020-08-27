@@ -19,7 +19,15 @@ export class ConfigService {
             this.envConfig = parse(fs.readFileSync(envFilePath));
         } else {
             this.envConfig = {
+                PORT: process.env.APP_PORT,
                 APP_PORT: process.env.APP_PORT,
+                MYSQL_HOST: process.env.MYSQL_HOST,
+                MYSQL_USERNAME: process.env.MYSQL_USERNAME,
+                MYSQL_PASSWORD: process.env.MYSQL_PASSWORD,
+                MYSQL_PORT: process.env.MYSQL_PORT,
+                MYSQL_DATABASE: process.env.MYSQL_DATABASE,
+                JWT_SECRET: process.env.JWT_SECRET,
+                JWT_EXPIRE_IN: process.env.JWT_EXPIRE_IN,
             }
         }
     }
