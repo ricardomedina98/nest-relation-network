@@ -24,6 +24,8 @@ import { TypeRelationshipEntity } from "../entities/type-relationship.entity";
 import { TypeRelationshipDto } from "../dto/type-relationship.dto";
 import { QualityRelationshipDto } from "../dto/quality-relationship.dto";
 import { QualityRelationshipEntity } from "../entities/quality-relationship.entity";
+import { UpdateResult } from "typeorm";
+import { UpdateResultDto } from "../dto/update-result.dto";
 
 export const toContactDto = (contactEntity: ContactEntity): ContactDto => {
     return {
@@ -157,6 +159,12 @@ export const toAddressDto = (addressEntity: AddressEntity) : AddressDto => {
         postalCode: addressEntity?.postalCode
     }
 
+}
+
+export const toUpdateResultDto = (updateResult: UpdateResult): UpdateResultDto => {
+    return {
+        affected: updateResult.affected
+    }
 }
 
 export const toRelationshipDto = (relationshipEntity: TypeRelationshipEntity): TypeRelationshipDto => {

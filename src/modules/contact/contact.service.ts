@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import { ContactRepository } from './repositories/contact.repository';
 import { ContactStatus } from './types/contact-status.enum';
-import { toContactDto, toProfessionDto, toOcupationDto, toClasificationDto, toHobbieDto, toTitleDto, toGenderDto, toCivilStatusDto, toContactMinDto, toRelationshipDto, toQualityRelationshipDto } from './mapper/contact.mapper';
+import { toContactDto, toProfessionDto, toOcupationDto, toClasificationDto, toHobbieDto, toTitleDto, toGenderDto, toCivilStatusDto, toContactMinDto, toRelationshipDto, toQualityRelationshipDto, toUpdateResultDto } from './mapper/contact.mapper';
 import { ContactDto } from './dto/contact/contact.dto';
 import { ProfessionDto } from './dto/profession.dto';
 import { ProfessionRepository } from './repositories/profession.repository';
@@ -34,6 +34,7 @@ import { QualityRelationshipRepository } from './repositories/quality-relationsh
 import { TypeRelationshipDto } from './dto/type-relationship.dto';
 import { QualityRelationshipDto } from './dto/quality-relationship.dto';
 import { UpdateContactDto } from './dto/contact/update-contact.dto';
+import { of } from 'rxjs';
 
 @Injectable()
 export class ContactService {
@@ -73,6 +74,35 @@ export class ContactService {
         private readonly _qualityRelationshipRepository: QualityRelationshipRepository,
     ) {}
 
+    async getContactById(id_contact: number) {
+        const contact = await this._contactRepository.findOne({
+            where: {
+                id_contact
+            },
+            relations: [
+                "you_have_referred_contact",
+                "has_referred_you_contact",
+                "title",
+                "gender",
+                "civilstatus",
+                "profession",
+                "ocupation",
+                "clasification",
+                "hobbie",
+                "address",
+                "user",
+                "typeRelationship",
+                "qualityRelationship"
+            ]
+        });
+
+        if(!contact) {
+            throw new NotFoundException('Contact does not exist');
+        }
+
+        return toContactDto(contact);
+    }
+
     async getAllContactsByUser(user: UserDto) { //: Promise<ContactDto[]>
 
         const userDB = await this._userRepository.findOne(user.id, { where: { status: UserStatus.ACTIVE } });
@@ -103,6 +133,96 @@ export class ContactService {
 
 
         return contacts.map(contact => toContactDto(contact));
+    }
+
+    async createContactByUser(createContactDto: CreateContactDto, user: UserDto) {
+
+        const userDB = await this._userRepository.findOne(user.id, { where: { status: UserStatus.ACTIVE } });
+
+        //Optional parameters
+        const you_have_referred_contactDB = await this._contactRepository.findOne({where: { id_contact: createContactDto.you_have_referred_contact }});
+        
+        const has_referred_you_contactDB = await this._contactRepository.findOne({where: { id_contact: createContactDto.has_referred_you_contact }});
+
+        const titleDB = await this._titleRepository.findOne({where: { id_title: createContactDto.title }});
+
+        const genderDB = await this._genderRepository.findOne({ where: { id_gender: createContactDto.gender } });
+        
+        const civilstatusDB = await this._civilStatusRepository.findOne({ where: { id_civilstatus: createContactDto.civilstatus } });
+
+        const professionDB = await this._professionRepository.findOne({where: { id_profession: createContactDto.profession }});
+        
+        const ocupationDB = await this._ocupationRepository.findOne({where: { id_ocupation: createContactDto.ocupation }});
+
+        const clasificationDB = await this._clasificationRepository.findOne({ where: { id_clasification: createContactDto.clasification } });
+
+        const hobbieDB = await this._hobbieRepository.findOne({ where: { id_hobbie: createContactDto.hobbie } });
+
+        const typeRelationshipDB = await this._relationshipRepository.findOne({where: { id_type_relationship: createContactDto.type_relationship }});
+
+        const qualityRelationshipDB = await this._qualityRelationshipRepository.findOne({where: { id_quality_relationship: createContactDto.quality_relationship }});
+
+        //Address
+        const countryDB = await this._countryRepository.findOne({ where: { iso2: createContactDto.country } });
+        const stateDB = await this._stateRepository.findOne({ where: { iso2: createContactDto.state }});
+        const cityDB = await this._cityRepository.findOne({ where: { id: createContactDto.city }});
+
+        let addressNew = this._addressRepository.create({
+            country: countryDB,
+            state: stateDB,
+            city: cityDB,
+            postalCode : createContactDto.postalCode
+        });
+
+
+        const contactNew = this._contactRepository.create({
+            name: createContactDto.name,
+            firstSurname: createContactDto.firstSurname,
+            secondSurname: createContactDto.secondSurname,
+            phone: createContactDto.phone,
+            age: createContactDto.age,
+            alias: createContactDto.alias,
+            email: createContactDto.email,
+            timeMeet: moment(createContactDto.timeMeet,'YYYY-MM-DD').toDate(),
+            have_you_referred: createContactDto.have_you_referred,
+            has_referred_you: createContactDto.has_referred_you,
+            you_have_referred_contact: you_have_referred_contactDB,
+            has_referred_you_contact: has_referred_you_contactDB,
+            title: titleDB,
+            gender: genderDB,
+            civilstatus: civilstatusDB,
+            profession: professionDB,
+            ocupation: ocupationDB,
+            clasification: clasificationDB,
+            hobbie: hobbieDB,
+            address: addressNew,
+            user: userDB,
+            typeRelationship: typeRelationshipDB,
+            qualityRelationship: qualityRelationshipDB
+        });
+
+        let contact = await this._contactRepository.save(contactNew);
+
+        contact = await this._contactRepository.findOne(contact, {
+            relations: [
+                "you_have_referred_contact",
+                "has_referred_you_contact",
+                "title",
+                "gender",
+                "civilstatus",
+                "profession",
+                "ocupation",
+                "clasification",
+                "hobbie",
+                "address",
+                "user",
+                "typeRelationship",
+                "qualityRelationship"
+            ]
+        });
+        
+        return toContactDto(contact);
+
     }
 
     async updateContact(id_contact: number, updateContactDto: UpdateContactDto, user: UserDto) {
@@ -150,7 +270,7 @@ export class ContactService {
         const cityDB = await this._cityRepository.findOne({ where: { id: updateContactDto.city }});
 
 
-        let contactAddressUpdate = this._addressRepository.update(contact.address.id_address, {
+        let contactAddressUpdate = await this._addressRepository.update(contact.address.id_address, {
             country: countryDB,
             state: stateDB,
             city: cityDB,
@@ -182,80 +302,26 @@ export class ContactService {
             qualityRelationship: qualityRelationshipDB
         });
 
-        // contactUpdated = await this._contactRepository.save(contactUpdated);
-
-        return contactUpdated;
+        return await this.getContactById(id_contact);
     }
 
-    async createContactByUser(createContactDto: CreateContactDto, user: UserDto) {
+    async deleteContact(id_contact: number) {
 
-        const userDB = await this._userRepository.findOne(user.id, { where: { status: UserStatus.ACTIVE } });
-
-        //Optional parameters
-        const you_have_referred_contactDB = await this._contactRepository.findOne({where: { id_contact: createContactDto.you_have_referred_contact }});
-        
-        const has_referred_you_contactDB = await this._contactRepository.findOne({where: { id_contact: createContactDto.has_referred_you_contact }});
-
-        const titleDB = await this._titleRepository.findOne({where: { id_title: createContactDto.title }});
-
-        const genderDB = await this._genderRepository.findOne({ where: { id_gender: createContactDto.gender } });
-        
-        const civilstatusDB = await this._civilStatusRepository.findOne({ where: { id_civilstatus: createContactDto.civilstatus } });
-
-        const professionDB = await this._professionRepository.findOne({where: { id_profession: createContactDto.profession }});
-        
-        const ocupationDB = await this._ocupationRepository.findOne({where: { id_ocupation: createContactDto.ocupation }});
-
-        const clasificationDB = await this._clasificationRepository.findOne({ where: { id_clasification: createContactDto.clasification } });
-
-        const hobbieDB = await this._hobbieRepository.findOne({ where: { id_hobbie: createContactDto.hobbie } });
-
-        const typeRelationshipDB = await this._relationshipRepository.findOne({where: { id_type_relationship: createContactDto.type_relationship }});
-
-        const qualityRelationshipDB = await this._qualityRelationshipRepository.findOne({where: { id_quality_relationship: createContactDto.quality_relationship }});
-
-        //Address
-        const countryDB = await this._countryRepository.findOne({ where: { iso2: createContactDto.country } });
-        const stateDB = await this._stateRepository.findOne({ where: { iso2: createContactDto.state }});
-        const cityDB = await this._cityRepository.findOne({ where: { id: createContactDto.city }});
-
-        let addressNew = this._addressRepository.create({
-            country: countryDB,
-            state: stateDB,
-            city: cityDB,
-            postalCode : createContactDto.postalCode
+        const contact = await this._contactRepository.findOne({
+            where: {
+                id_contact
+            }
         });
 
+        if(!contact) {
+            throw new NotFoundException('Contact does not exist');
+        }
 
-        let contactNew = this._contactRepository.create({
-            name: createContactDto.name,
-            firstSurname: createContactDto.firstSurname,
-            secondSurname: createContactDto.secondSurname,
-            phone: createContactDto.phone,
-            age: createContactDto.age,
-            alias: createContactDto.alias,
-            email: createContactDto.email,
-            timeMeet: moment(createContactDto.timeMeet,'YYYY-MM-DD').toDate(),
-            have_you_referred: createContactDto.have_you_referred,
-            has_referred_you: createContactDto.has_referred_you,
-            you_have_referred_contact: you_have_referred_contactDB,
-            has_referred_you_contact: has_referred_you_contactDB,
-            title: titleDB,
-            gender: genderDB,
-            civilstatus: civilstatusDB,
-            profession: professionDB,
-            ocupation: ocupationDB,
-            clasification: clasificationDB,
-            hobbie: hobbieDB,
-            address: addressNew,
-            user: userDB,
-            typeRelationship: typeRelationshipDB,
-            qualityRelationship: qualityRelationshipDB
+        const contactUpdated = await this._contactRepository.update(contact.id_contact, {
+            status: ContactStatus.INACTIVE
         });
 
-        contactNew = await this._contactRepository.save(contactNew);
-        
-        return contactNew;
+        return toUpdateResultDto(contactUpdated);
 
     }
 
@@ -307,7 +373,11 @@ export class ContactService {
 
     async getAllProfessions(): Promise<ProfessionDto[]> {
 
-        const professions = await this._professionRepository.find();
+        const professions = await this._professionRepository.find({
+            order: {
+                name: "ASC"
+            }
+        });
 
         return professions.map(profession => toProfessionDto(profession));
 
@@ -315,44 +385,72 @@ export class ContactService {
 
     async getAllOcupations(): Promise<OcupationDto[]> {
 
-        const ocupations = await this._ocupationRepository.find();
+        const ocupations = await this._ocupationRepository.find({
+            order: {
+                name: "ASC"
+            }
+        });
 
         return ocupations.map(ocupation => toOcupationDto(ocupation));
 
     }
 
     async getAllClasifications(): Promise<ClasificationDto[]> {
-        const clasifications = await this._clasificationRepository.find();
+        const clasifications = await this._clasificationRepository.find({
+            order: {
+                name: "ASC"
+            }
+        });
 
         return clasifications.map(clasification => toClasificationDto(clasification));
     }
 
     async getAllHobbies(): Promise<HobbieDto[]> {
-        const hobbies = await this._hobbieRepository.find();
+        const hobbies = await this._hobbieRepository.find({
+            order: {
+                name: "ASC"
+            }
+        });
 
         return hobbies.map(hobbie => toHobbieDto(hobbie));
     }
 
     async getAllTitles(): Promise<TitleDto[]> {
-        const titles = await this._titleRepository.find();
+        const titles = await this._titleRepository.find({
+            order: {
+                name: "ASC"
+            }
+        });
 
         return titles.map(title => toTitleDto(title));
     }
 
     async getAllGenders(): Promise<GenderDto[]> {
-        const genders = await this._genderRepository.find();
+        const genders = await this._genderRepository.find({
+            order: {
+                name: "ASC"
+            }
+        });
 
         return genders.map(gender => toGenderDto(gender));
     }
 
     async getAllCivilStatuses(): Promise<CivilStatusDto[]> {
-        const civilStatuses = await this._civilStatusRepository.find();
+        const civilStatuses = await this._civilStatusRepository.find({
+            order: {
+                name: "ASC"
+            }
+        });
 
         return civilStatuses.map(civilStatus => toCivilStatusDto(civilStatus));
     }
 
     async getAllRelationships(): Promise<TypeRelationshipDto[]> {
-        const relationships = await this._relationshipRepository.find();
+        const relationships = await this._relationshipRepository.find({
+            order: {
+                name: "ASC"
+            }
+        });
 
         return relationships.map(relationship => toRelationshipDto(relationship));
     }

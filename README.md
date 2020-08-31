@@ -1,4 +1,4 @@
-# Library Control - UTE
+# Relation Network - RPT
 
 # How to Run
 
@@ -10,6 +10,8 @@
     MYSQL_PASSWORD=test
     MYSQL_PORT=3306
     MYSQL_DATABASE=relationship_network
+    JWT_SECRET=test1
+    JWT_EXPIRE_IN=7d
 ```
 
 ### Create file ormconfig.json

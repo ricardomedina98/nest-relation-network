@@ -1,8 +1,8 @@
 {
-  "name": "nest-library-control-ute",
-  "version": "0.0.1",
+  "name": "nest-relationship-network",
+  "version": "1.0.0",
   "description": "",
-  "author": "",
+  "author": "Ricardo Medina",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
