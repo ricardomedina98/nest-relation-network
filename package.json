@@ -1,8 +1,8 @@
 {
-  "name": "nest-library-control-ute",
-  "version": "0.0.1",
+  "name": "nest-relationship-network",
+  "version": "1.0.0",
   "description": "",
-  "author": "",
+  "author": "Ricardo Medina",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -27,7 +27,9 @@
     "typeorm:schema:drop": "npm run typeorm -- schema:drop",
     "typeorm:schema:sync": "npm run typeorm -- schema:sync",
     "typeorm:seeding:seed:config": "npm run typeorm:seeding config",
-    "typeorm:seeding:seed:run": "npm run typeorm:seeding seed"
+    "typeorm:seeding:seed:run": "npm run typeorm:seeding seed",
+    "prestart:prod": "rimraf dist && npm run build",
+    "postinstall": "npm run prestart:prod"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",

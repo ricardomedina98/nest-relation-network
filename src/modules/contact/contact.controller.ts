@@ -73,7 +73,7 @@ export class ContactController {
 
     @Get('user')
     @Roles(RoleType.ADMIN, RoleType.GENERAL)
-    async getContacts(@Request() req: any) {
+    async getContactsByUser(@Request() req: any) {
         return this._contactService.getAllContactsByUser(req.user);
     }
 
@@ -102,6 +102,18 @@ export class ContactController {
         @Body(new PareseToNullEmptyField()) updateContactDto: UpdateContactDto,
         @Request() req: any) {
         return this._contactService.updateContact(id_contact, updateContactDto, req.user);
+    }
+
+    @Delete(':id_contact')
+    @Roles(RoleType.ADMIN, RoleType.GENERAL)
+    async deleteContact(@Param('id_contact', ParseIntPipe) id_contact: number) {
+        return this._contactService.deleteContact(id_contact);
+    }
+
+    @Get(':id_contact')
+    @Roles(RoleType.ADMIN, RoleType.GENERAL)
+    async getContactById(@Param('id_contact', ParseIntPipe) id_contact: number) {
+        return this._contactService.getContactById(id_contact);
     }
 
 
